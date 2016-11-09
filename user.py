@@ -51,8 +51,12 @@ def savedata(flage,tmTel,err=None):
         print('\033[1;32;m [{}] {} {} {} \033[0m'.format(formattime(),'6',flage, tmTel))
         db = DbControl()
         print(db.edituser(tmTel))
+    elif flage == '限额商品超出购买份额!':
+        print('\033[1;33;m [{}] {} {} {} \033[0m'.format(formattime(), '7', flage, tmTel))
+        db = DbControl()
+        print(db.edituser(tmTel))
     else:
-        print('\033[1;33;m [{}] {} {} {} \033[0m'.format(formattime(),'7',flage, tmTel))
+        print('\033[1;33;m [{}] {} {} {} \033[0m'.format(formattime(),'8',flage, tmTel))
 
 
 
