@@ -87,9 +87,13 @@ class Weikegu(object):
                 payurl = 'http://www.315wkg.com' + temp[0]
                 print(payurl)
                 r = requests.get(payurl, cookies=self.cookies, headers=self.cookies)
-                return '付款成功', self.tmTel,""
+                print(r.text)
+
+                return '付款成功', self.tmTel,self.kyjf
         except Exception as e:
             return '失败', self.tmTel, e
+
+
 
 if __name__ == '__main__':
     weikegu = Weikegu('13301157613')

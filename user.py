@@ -36,7 +36,7 @@ def loaduser():
     return userlist
 
 
-def savedata(flage,tmTel,err=None):
+def savedata(flage,tmTel,temp=None):
     if flage == '商品已售完':
         print('\033[1;33;m [{}] {} {} {} \033[0m'.format(formattime(),'1',flage, tmTel))
     elif flage == '余额不足':
@@ -46,11 +46,12 @@ def savedata(flage,tmTel,err=None):
     elif flage == '错误':
         print('\033[1;31;m [{}] {} {} {} \033[0m'.format(formattime(),'4',flage, tmTel))
     elif flage == '失败':
-        print('\033[1;31;m [{}] {} {} {} {} \033[0m'.format(formattime(),'5',flage, tmTel ,err))
+        print('\033[1;31;m [{}] {} {} {} {} \033[0m'.format(formattime(),'5',flage, tmTel ,temp))
     elif flage == '付款成功':
         print('\033[1;32;m [{}] {} {} {} \033[0m'.format(formattime(),'6',flage, tmTel))
         db = DbControl()
-        print(db.edituser(tmTel))
+        db.edituser(tmTel)
+        db.updatemoney(tmTel,int(temp)-3000)
     elif flage == '限额商品超出购买份额!':
         print('\033[1;33;m [{}] {} {} {} \033[0m'.format(formattime(), '7', flage, tmTel))
         db = DbControl()

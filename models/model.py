@@ -82,6 +82,16 @@ class DbControl(object):
             print(e)
             return
 
+    def updatemoney(self,tmTel,money):
+        try:
+            session=self.DBSession()
+            session.query(User).filter(User.tmTel == tmTel).update({'money':money})
+            session.commit()
+            session.close()
+            return '数据更新成功'
+        except Exception as e:
+            print(e)
+
 if __name__ == '__main__':
     db = DbControl()
     # print(db.edituser('13301157611'))
