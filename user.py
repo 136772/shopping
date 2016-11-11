@@ -57,8 +57,10 @@ def savedata(flage,tmTel,temp=None):
     elif flage == '限额商品超出购买份额!':
         print('\033[1;33;m [{}] {} {} {} \033[0m'.format(formattime(), '7', flage, tmTel))
         db = DbControl()
+    elif flage == '未打开网页':
+        print('\033[1;31;m [{}] {} {} {} {} \033[0m'.format(formattime(),'8',flage, tmTel ,temp))
     else:
-        print('\033[1;33;m [{}] {} {} {} \033[0m'.format(formattime(),'8',flage, tmTel))
+        print('\033[1;33;m [{}] {} {} {} \033[0m'.format(formattime(),'9',flage, tmTel, temp))
 
 
 

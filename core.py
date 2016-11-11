@@ -4,6 +4,7 @@ import requests
 import json
 import re
 import time
+import random
 
 class Weikegu(object):
     headers = {
@@ -26,20 +27,21 @@ class Weikegu(object):
 
     def login(self):
         try:
-            url = 'http://www.315wkg.com/index.php?s=/Login/login'
+            #time.sleep(random.randrange(2,4))
+            #url = 'http://www.315wkg.com/index.php?s=/Login/login'
 
-            r = requests.get(url, headers=self.headers)
-            text = r.text
-            self.ha = re.search('name="__hash__" value="(\S+)"', text).group(1)
+            #r = requests.get(url, headers=self.headers)
+            #text = r.text
+            #self.ha = re.search('name="__hash__" value="(\S+)"', text).group(1)
             #print(self.tmTel, self.ha)
             login_url = 'http://www.315wkg.com/index.php?s=/Login/password/control//tel//gId/'
-            payload = {'tmTel': self.tmTel, 'tmPwd': self.tmPwd, '__hash__': self.ha}
+            payload = {'tmTel': self.tmTel, 'tmPwd': self.tmPwd}
 
             r = requests.post(login_url, data=payload)
 
             self.cookies = r.cookies
             #print(self.cookies)
-            print('[{}]'.format(self.formattime()),self.tmTel, '登录成功')
+            #print('[{}]'.format(self.formattime()),self.tmTel, '登录成功')
             return self.shopping()
             #
             #r = requests.get('http://www.315wkg.com/index.php?s=/My/index', cookies=self.cookies)
@@ -54,7 +56,12 @@ class Weikegu(object):
             r = requests.get(url, cookies=self.cookies, headers=self.headers)
 
             text = r.text
-            self.adId = re.search('name="adId" value="(\d+)"', text).group(1)
+            self.adId = re.search('name="adId" value="(\d+)"', text)
+            if not self.adId:
+                return '未打开网页', self.tmTel, ""
+                # return self.tmTel, text, ""
+            self.adId = self.adId.group(1)
+            
             self.ha = re.search('name="__hash__" value="(\S+)"', text).group(1)
             # self.count = re.search('name="{}" value="(\d+)"'.format(self.num), text).group(1)
             self.total = re.search('name="total" value="(\d+)"', text).group(1)
@@ -62,7 +69,7 @@ class Weikegu(object):
 
             # print(text)
             if int(self.kyjf) >= int(self.total):
-                print('[{}]'.format(self.formattime()),self.tmTel, '购物前余额:', self.kyjf, '添加购物车成功')
+                #print('[{}]'.format(self.formattime()),self.tmTel, '购物前余额:', self.kyjf, '添加购物车成功')
                 return self.paying()
 
             else:
@@ -80,24 +87,32 @@ class Weikegu(object):
                 'total': self.total,
                 '__hash__': self.ha,
             }
-            # print(payload)
-            r = requests.post(url, data=payload, cookies=self.cookies, headers=self.cookies)
+            #print(self.tmTel, payload)
+            r = requests.post(url, data=payload, cookies=self.cookies, headers=self.headers)
 
             text = r.text
+            #print(text)
             temp = re.findall("alert\([\'\"](.*)[\'\"]\);", text)
+            #print(1,temp)
             if temp:
+                #print(2,temp)
                 return temp[0], self.tmTel,""
             else:
                 temp = re.findall('window.location="(\S+)";', text)
-
+                #print(3,temp)
                 payurl = 'http://www.315wkg.com' + temp[0]
-                r = requests.get(payurl, cookies=self.cookies, headers=self.cookies)
+                print(self.tmTel,payurl)
+                r = requests.get(payurl, cookies=self.cookies, headers=self.headers)
+                text = r.text
                 if r.status_code != requests.codes.ok:
                     payurl = 'http://www.315wkg.com/index.php?s=' + temp[0]
-                    r = requests.get(payurl, cookies=self.cookies, headers=self.cookies)
+                    print(self.tmTel,payurl)
+                    r = requests.get(payurl, cookies=self.cookies, headers=self.headers)
                     text = r.text
                 temp = re.findall("alert\([\'\"](.*)[\'\"]\);", text)
+                #print(4,temp)
                 if temp:
+                    #print(5,temp)
                     return temp[0], self.tmTel,self.kyjf
                 
         except Exception as e:
