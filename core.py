@@ -106,11 +106,13 @@ class Weikegu(object):
                 print(self.tmTel,payurl)
                 r = requests.get(payurl, cookies=self.cookies, headers=self.headers)
                 text = r.text
-                if r.status_code != requests.codes.ok:
-                    payurl = 'http://www.315wkg.com/index.php?s=' + temp[0]
-                    print(self.tmTel,payurl)
-                    r = requests.get(payurl, cookies=self.cookies, headers=self.headers)
-                    text = r.text
+                print(text)
+                #if r.status_code != requests.codes.ok:
+                   # payurl = 'http://www.315wkg.com/index.php?s=' + temp[0]
+                   # print(self.tmTel,payurl)
+                   # r = requests.get(payurl, cookies=self.cookies, headers=self.headers)
+                   # text = r.text
+                   # print(text)
                 temp = re.findall("alert\([\'\"](.*)[\'\"]\);", text)
                 #print(4,temp)
                 if temp:
