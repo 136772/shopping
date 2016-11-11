@@ -41,8 +41,8 @@ def process_data(threadName, q):
                 return user.savedata(flag, tmTel, err)
             else:
                 queueLock.release()
-    except Exception:
-        print('不知道咋了')
+    except Exception as e:
+        print('不知道咋了',e)
 
 
 

@@ -41,21 +41,22 @@ def savedata(flage,tmTel,temp=None):
         print('\033[1;33;m [{}] {} {} {} \033[0m'.format(formattime(),'1',flage, tmTel))
     elif flage == '余额不足':
         print('\033[1;33;m [{}] {} {} {} \033[0m'.format(formattime(),'2',flage, tmTel))
+        db = DbControl()
+        db.updatemoney(tmTel,temp)
     elif flage == '非法操作！':
         print('\033[1;31;m [{}] {} {} {} \033[0m'.format(formattime(),'3',flage, tmTel))
     elif flage == '错误':
         print('\033[1;31;m [{}] {} {} {} \033[0m'.format(formattime(),'4',flage, tmTel))
     elif flage == '失败':
         print('\033[1;31;m [{}] {} {} {} {} \033[0m'.format(formattime(),'5',flage, tmTel ,temp))
-    elif flage == '付款成功':
+    elif flage == '付款成功！':
         print('\033[1;32;m [{}] {} {} {} \033[0m'.format(formattime(),'6',flage, tmTel))
         db = DbControl()
         db.edituser(tmTel)
-        db.updatemoney(tmTel,int(temp)-3000)
+        db.updatemoney(tmTel, int(temp)-3000)
     elif flage == '限额商品超出购买份额!':
         print('\033[1;33;m [{}] {} {} {} \033[0m'.format(formattime(), '7', flage, tmTel))
         db = DbControl()
-        print(db.edituser(tmTel))
     else:
         print('\033[1;33;m [{}] {} {} {} \033[0m'.format(formattime(),'8',flage, tmTel))
 

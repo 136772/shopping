@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, create_engine
+from sqlalchemy import Column, String, create_engine, and_
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import random
@@ -19,7 +19,7 @@ class User(Base):
 
 class DbControl(object):
     def __init__(self):
-        print('sqlite:///'+BASE_DIR+'/weikegu.db')
+        #print('sqlite:///'+BASE_DIR+'/weikegu.db')
         self.engine = create_engine('sqlite:///'+BASE_DIR+'/weikegu.db', echo=True)
         self.DBSession = sessionmaker(bind=self.engine)
 
@@ -45,8 +45,8 @@ class DbControl(object):
             date = self.__fromattime__()
             user = session.query(User).filter(User.date < date).all()
             session.close()
-            if len(user) > 15:
-                temp = 15
+            if len(user) > 20:
+                temp = 20
             else:
                 temp = len(user)
 
@@ -54,6 +54,7 @@ class DbControl(object):
                 u = random.choice(user)
                 if u.tmTel not in userlist:
                     userlist.append(u.tmTel)
+            print(userlist)
             return userlist
         except Exception as e:
             print(e)
@@ -91,6 +92,19 @@ class DbControl(object):
             return '数据更新成功'
         except Exception as e:
             print(e)
+
+
+    def checkmoney(self):
+        try:
+            session = self.DBSession()
+            user = session.query(User).filter(User.money < 3000).all()
+            session.close()
+            if not user:
+                return
+            return user
+        except Exception as e:
+            print(e)
+            return
 
 if __name__ == '__main__':
     db = DbControl()

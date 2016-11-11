@@ -26,26 +26,32 @@ class Weikegu(object):
 
     def login(self):
         try:
-            login_url = 'http://www.315wkg.com/index.php/Login/password/control//tel//gId/'
-            payload = {'tmTel': self.tmTel, 'tmPwd': self.tmPwd}
+            url = 'http://www.315wkg.com/index.php?s=/Login/login'
+
+            r = requests.get(url, headers=self.headers)
+            text = r.text
+            self.ha = re.search('name="__hash__" value="(\S+)"', text).group(1)
+            #print(self.tmTel, self.ha)
+            login_url = 'http://www.315wkg.com/index.php?s=/Login/password/control//tel//gId/'
+            payload = {'tmTel': self.tmTel, 'tmPwd': self.tmPwd, '__hash__': self.ha}
 
             r = requests.post(login_url, data=payload)
 
             self.cookies = r.cookies
-            # print(self.cookies)
+            #print(self.cookies)
             print('[{}]'.format(self.formattime()),self.tmTel, '登录成功')
             return self.shopping()
             #
-            # r = requests.get('http://www.315wkg.com/index.php/My/myaccount', cookies=self.cookies)
-            # print(r.text)
+            #r = requests.get('http://www.315wkg.com/index.php?s=/My/index', cookies=self.cookies)
+            #print(self.tmTel,r)
         except Exception as e:
             return '失败', self.tmTel, e
 
     def shopping(self):
         try:
-            url = 'http://www.315wkg.com/index.php/Shoppingcart/billing/gId/{}/gNum/1'.format(self.num)
+            url = 'http://www.315wkg.com/index.php?s=/Shoppingcart/billing/gId/{}/gNum/1'.format(self.num)
             # print(url)
-            r = requests.get(url, cookies=self.cookies, headers=self.cookies)
+            r = requests.get(url, cookies=self.cookies, headers=self.headers)
 
             text = r.text
             self.adId = re.search('name="adId" value="(\d+)"', text).group(1)
@@ -60,14 +66,14 @@ class Weikegu(object):
                 return self.paying()
 
             else:
-                return '余额不足'
+                return '余额不足',self.tmTel,self.kyjf
         except Exception as e:
             return '失败',self.tmTel,e
 
     def paying(self):
         try:
             # print(self.num)
-            url = 'http://www.315wkg.com/index.php/Settlement/settlement'
+            url = 'http://www.315wkg.com/index.php?s=/Settlement/settlement'
             payload = {
                 'adId': self.adId,
                 '{}'.format(self.num): '1',
@@ -85,16 +91,20 @@ class Weikegu(object):
                 temp = re.findall('window.location="(\S+)";', text)
 
                 payurl = 'http://www.315wkg.com' + temp[0]
-                print(payurl)
                 r = requests.get(payurl, cookies=self.cookies, headers=self.cookies)
-                print(r.text)
-
-                return '付款成功', self.tmTel,self.kyjf
+                if r.status_code != requests.codes.ok:
+                    payurl = 'http://www.315wkg.com/index.php?s=' + temp[0]
+                    r = requests.get(payurl, cookies=self.cookies, headers=self.cookies)
+                    text = r.text
+                temp = re.findall("alert\([\'\"](.*)[\'\"]\);", text)
+                if temp:
+                    return temp[0], self.tmTel,self.kyjf
+                
         except Exception as e:
             return '失败', self.tmTel, e
 
 
 
 if __name__ == '__main__':
-    weikegu = Weikegu('13301157613')
+    weikegu = Weikegu('13001938805')
     print(weikegu.login())
