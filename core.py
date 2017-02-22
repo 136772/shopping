@@ -58,7 +58,7 @@ class Weikegu(object):
             text = r.text
             self.adId = re.search('name="adId" value="(\d+)"', text)
             if not self.adId:
-                print('未打开网页', self.tmTel)
+                #print('未打开网页', self.tmTel)
                 return self.login()
                 #return '未打开网页', self.tmTel, ""
                 # return self.tmTel, text, ""
